@@ -145,7 +145,7 @@ ggplot(medalDT[order(-mpa)], aes(y = 1:nrow(medalDT), x = mpa)) + scale_y_revers
     geom_point(size = 1, aes(x = ifelse(gpa == 0, NA, gpa)), color = "gold") + 
     geom_segment(aes(xend = 0, x = gpa, yend = 1:nrow(medalDT)), color = "gold") +
     
-    ggtitle("Olympic teams efficiency\n medals per athlete (right panel) and total medals (left panel)") + 
+    ggtitle("Olympic teams efficiency:\n medals per athlete (right panel) and total medals (left panel)") + 
     scale_x_continuous(breaks = c(-9:-3, 0:6)/10, labels = c(20*6:0, (0:6)/10),  
         limits = c(-0.95, 0.6)) + theme_minimal() +
     theme(
@@ -157,7 +157,7 @@ ggplot(medalDT[order(-mpa)], aes(y = 1:nrow(medalDT), x = mpa)) + scale_y_revers
 ```
 
 We see that leaders have changed now, namely Jamaica and Serbia were the
-most 'efficient' in medal accumulation. Every second athlete from these two
+most efficient in medal accumulation. Every second athlete from these two
 countries got a medal.
 
 We can also check how the rankings change for all countries *(note that
@@ -193,8 +193,8 @@ ggplot(data = long[variable %in% c("medalrank2", "mparank2")],
         breaks = c(0, range(long$`ranking change`)),
         labels = c(0, paste0(ifelse(range(long$`ranking change`)>0, "+", ""), range(long$`ranking change`)))) + 
     scale_y_reverse(breaks = 1:nrow(rankDT)) + theme_minimal() +
-    scale_x_discrete(labels = c("official medal rank", "'effectiveness' rank")) +
-    ggtitle("Changes in medal rankings from official to 'effectiveness' view") +
+    scale_x_discrete(labels = c("official medal rank", "efficiency rank")) +
+    ggtitle("Changes in medal rankings from official to efficiency") +
     theme(
         axis.title = element_blank(), 
         axis.line = element_blank(), 
