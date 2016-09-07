@@ -46,7 +46,7 @@ winning hockey team.
 
 # Getting the data
 
-```{r init}
+```{r init, message = FALSE}
 library(rvest)
 library(data.table)
 library(ggplot2)
@@ -99,8 +99,7 @@ It will get official medal counts, together with actual medal counts (or athlete
 Now we can apply it on our list of country links and bind all into a data table.
 
 ```{r cache = TRUE}
-# NB: this will take some time and needs internet access
-fullList <- lapply(links, getInfo)
+fullList <- lapply(links, getInfo) # NB: this will take some time and needs internet access
 fullDT <- rbindlist(fullList)
 ```
 

@@ -159,9 +159,8 @@ p.caption { font-style: italic; }
 </div>
 <div id="getting-the-data" class="section level1">
 <h1>Getting the data</h1>
-<pre class="r"><code>library(rvest)</code></pre>
-<pre><code>## Loading required package: xml2</code></pre>
-<pre class="r"><code>library(data.table)
+<pre class="r"><code>library(rvest)
+library(data.table)
 library(ggplot2)</code></pre>
 <p>The official website <a href="http://www.rio2016.com" class="uri">http://www.rio2016.com</a> have a nice and clear structure, that allows for straightforward web-scraping. We need to check the source/inspect the pages to get appropriate CSS-selectors.</p>
 <p>First we get the list of all participating countries with links to their individual pages.</p>
@@ -194,7 +193,7 @@ getInfo &lt;- function(link) {
 }</code></pre>
 <p>It will get official medal counts, together with actual medal counts (or athlete-medals) that we will use.</p>
 <p>Now we can apply it on our list of country links and bind all into a data table.</p>
-<pre class="r"><code>fullList &lt;- lapply(links, getInfo)
+<pre class="r"><code>fullList &lt;- lapply(links, getInfo) # NB: this will take some time and needs internet access
 fullDT &lt;- rbindlist(fullList)</code></pre>
 </div>
 <div id="results" class="section level1">
