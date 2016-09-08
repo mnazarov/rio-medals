@@ -257,8 +257,12 @@ allAthletes <- rbindlist(lapply(links, getAthletes)) # NB: this will take some t
 allMedals <- rbindlist(lapply(links, getMedals)) # NB: this will take some time and needs internet access
 ```
 
-With these we can do many different things, such as:
+With these we can look at many different things, such as:
 
+*10 sports with least number of participating athletes:*
+```{r least}
+kable(allAthletes[,.(athletes=.N), by=sport][order(athletes)][1:10])
+``` 
 
 *List namesakes from different countries:*
 ```{r namesakes}

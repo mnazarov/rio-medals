@@ -348,7 +348,59 @@ getMedals &lt;- function(link) {
 
 allAthletes &lt;- rbindlist(lapply(links, getAthletes)) # NB: this will take some time and needs internet access
 allMedals &lt;- rbindlist(lapply(links, getMedals)) # NB: this will take some time and needs internet access</code></pre>
-<p>With these we can do many different things, such as:</p>
+<p>With these we can look at many different things, such as:</p>
+<p><em>10 sports with least number of participating athletes:</em></p>
+<pre class="r"><code>kable(allAthletes[,.(athletes=.N), by=sport][order(athletes)][1:10])</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">sport</th>
+<th align="right">athletes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Trampoline Gymnastics</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td align="left">Cycling BMX</td>
+<td align="right">48</td>
+</tr>
+<tr class="odd">
+<td align="left">Marathon Swimming</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="left">Modern Pentathlon</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="left">Cycling Mountain Bike</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="left">Canoe Slalom</td>
+<td align="right">83</td>
+</tr>
+<tr class="odd">
+<td align="left">Beach Volleyball</td>
+<td align="right">96</td>
+</tr>
+<tr class="even">
+<td align="left">Rhythmic Gymnastics</td>
+<td align="right">96</td>
+</tr>
+<tr class="odd">
+<td align="left">Synchronised Swimming</td>
+<td align="right">104</td>
+</tr>
+<tr class="even">
+<td align="left">Triathlon</td>
+<td align="right">110</td>
+</tr>
+</tbody>
+</table>
 <p><em>List namesakes from different countries:</em></p>
 <pre class="r"><code>kable(allAthletes[,.(.N, country, sport),by=.(name)][N&gt;1][!duplicated(country), .(.N, country, sport),by=name][N&gt;1, -&quot;N&quot;, with=F])</code></pre>
 <table>
