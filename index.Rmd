@@ -50,6 +50,7 @@ winning hockey team.
 library(rvest)
 library(data.table)
 library(ggplot2)
+library(knitr)
 ```
 
 The official website http://www.rio2016.com have a nice and clear structure,
@@ -205,6 +206,73 @@ ggplot(data = long[variable %in% c("medalrank2", "mparank2")],
         axis.text.x = element_text(margin = margin(-30))
     )
 ```
+
+# Extra: keeping all data
+
+When scraping the pages we actually discarded a lot of data. We might rather
+keep it for further exploration.
+
+```{r data, cache = TRUE}
+
+getAthletes <- function(link) {
+  # get all info on athletes
+  html <- read_html(paste0("https://www.rio2016.com", link))
+  
+  country <- html_text(html_node(html, "div.page-info__highlights h1.page-info__title--countrie"))
+  abbr <- html_text(html_node(html, "a.page-info__country-link"), trim  = TRUE) 
+  athletes <- html_nodes(html, "ul.athletes-teams-graphic__full-list-content-list li")
+  
+  as.data.table(do.call(rbind, lapply(athletes, function(x) {
+                c(country = country, abbr = abbr, code = html_attr(x, "data-sport-code"),
+                    x %>% html_children() %>% html_children() %>% html_text() %>% setNames(c("name", "gender", "sport")))
+              })))
+}
+
+getMedals <- function(link) {
+  # get all info on athletes & medals
+  html <- read_html(paste0("https://www.rio2016.com", link))
+  
+  country <- html_text(html_node(html, "div.page-info__highlights h1.page-info__title--countrie"))
+  abbr <- html_text(html_node(html, "a.page-info__country-link"), trim  = TRUE) 
+  
+  gold <- html_nodes(html, "li.medals-list__item:nth-of-type(1) a.medals-list__item-link")
+  silver <- html_nodes(html, "li.medals-list__item:nth-of-type(2) a.medals-list__item-link")
+  bronze <- html_nodes(html, "li.medals-list__item:nth-of-type(3) a.medals-list__item-link")
+  
+  
+  rbindlist(unlist(recursive = FALSE, lapply(c("gold", "silver", "bronze"), function(type) {
+                lapply(seq_along(get(type)), function(idx) {
+                      x <- get(type)[[idx]]
+                      data.table(country = country, abbr = abbr, medal = type, 
+                          sport = x %>% html_children %>% `[[`(1) %>% html_text(trim=TRUE),
+                          athlete = html_children(x)[-1] %>% html_text,
+                          individual = length(html_children(x)) == 2,
+                          medalid = switch(type, "gold" = idx, "silver" = idx + length(gold), "bronze" = idx + length(gold) + length(silver))
+                      )
+                    })
+              })))
+}
+
+allAthletes <- rbindlist(lapply(links, getAthletes)) # NB: this will take some time and needs internet access
+allMedals <- rbindlist(lapply(links, getMedals)) # NB: this will take some time and needs internet access
+```
+
+With these we can do many different things, such as:
+
+
+*List namesakes from different countries:*
+```{r namesakes}
+kable(allAthletes[,.(.N, country, sport),by=.(name)][N>1][!duplicated(country), .(.N, country, sport),by=name][N>1, -"N", with=F])
+``` 
+
+*Athletes with names consisting of more than 5 words:*
+```{r longnames}
+kable(allAthletes[sapply(name, function(x) length(strsplit(x, " ", fixed = TRUE)[[1]]))>5, .(name, country, sport)])
+```
+
+These data are available (in `.json` and `.rds` formats) in the [project
+repository](https://github.com/mnazarov/rio-medals "project repository").
+
 
 ```{r ideas, echo = FALSE}
 # TODO: try to plot highest deviations from 'mean' 
